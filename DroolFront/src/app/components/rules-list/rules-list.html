@@ -1,0 +1,86 @@
+<p>rules-list works!</p>
+<div class="rules-list-container">
+  <div *ngIf="rules.length === 0" class="empty-state">
+    <mat-icon class="empty-icon">rule_folder</mat-icon>
+    <h3>No hay reglas creadas</h3>
+    <p>Crea tu primera regla de negocio usando el formulario de la izquierda</p>
+  </div>
+
+  <div class="rules-grid" *ngIf="rules.length > 0">
+    <mat-card
+      *ngFor="let rule of rules"
+      class="rule-card"
+      [class.inactive]="!rule.active">
+
+      <mat-card-header>
+        <div mat-card-avatar class="rule-avatar">
+          <mat-icon [class]="getTemplateColor(rule.template)">
+            {{ getTemplateIcon(rule.template) }}
+          </mat-icon>
+        </div>
+
+        <mat-card-title class="rule-title">
+          {{ rule.name }}
+        </mat-card-title>
+
+        <mat-card-subtitle class="rule-subtitle">
+          <mat-chip-set>
+            <mat-chip
+              [color]="getTemplateColor(rule.template)"
+              [class]="getTemplateColor(rule.template)">
+              {{ rule.template || 'custom' }}
+            </mat-chip>
+            <mat-chip
+              [class]="rule.active ? 'active-chip' : 'inactive-chip'">
+              {{ rule.active ? 'Activa' : 'Inactiva' }}
+            </mat-chip>
+          </mat-chip-set>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p class="rule-description">
+          {{ rule.description || 'Sin descripción' }}
+        </p>
+
+        <div class="rule-meta">
+          <small>
+            <mat-icon class="meta-icon">schedule</mat-icon>
+            Actualizada: {{ formatDate(rule.updatedAt) }}
+          </small>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions class="rule-actions">
+        <div class="toggle-section">
+          <mat-slide-toggle
+            [checked]="rule.active"
+            (change)="onToggleRule(rule.id)"
+            [matTooltip]="rule.active ? 'Desactivar regla' : 'Activar regla'">
+          </mat-slide-toggle>
+          <span class="toggle-label">
+            {{ rule.active ? 'Activa' : 'Inactiva' }}
+          </span>
+        </div>
+
+        <div class="action-buttons">
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="onEditRule(rule)"
+            matTooltip="Editar regla">
+            <mat-icon>edit</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="onDeleteRule(rule.id)"
+            matTooltip="Eliminar regla">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

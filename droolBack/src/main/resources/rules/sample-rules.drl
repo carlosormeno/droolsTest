@@ -1,0 +1,101 @@
+package com.example.droolsTest.rules;
+
+import com.example.droolsTest.model.Customer;
+import java.time.LocalDate;
+
+// Regla para descuento de clientes jóvenes
+rule "Descuento Cliente Joven"
+    when
+        $customer : Customer(age < 25)
+    then
+        $customer.setDiscount("15% descuento jóvenes");
+        $customer.setRecommendation("¡Aprovecha tu descuento juvenil en productos seleccionados!");
+end
+
+// Regla para clasificación VIP
+rule "Cliente VIP Premium"
+    when
+        $customer : Customer(totalPurchases > 5000)
+    then
+        $customer.setCategory("VIP");
+        $customer.setDiscount("20% descuento VIP");
+        $customer.setRecommendation("Acceso exclusivo a productos premium y envío gratis");
+        $customer.setEligibleForPromotion(true);
+end
+
+// Regla para cliente nuevo
+rule "Bienvenida Cliente Nuevo"
+    when
+        $customer : Customer(isNewCustomer() == true)
+    then
+        $customer.setRecommendation("¡Bienvenido! Descubre nuestros productos más populares");
+        $customer.setEligibleForPromotion(true);
+        $customer.setNextAction("Enviar email de bienvenida");
+end
+
+// Regla para cliente inactivo
+rule "Alerta Cliente Inactivo"
+    when
+        $customer : Customer(isActive == false)
+    then
+        $customer.setAlert("Cliente inactivo - requiere seguimiento");
+        $customer.setNextAction("Contactar para campaña de reactivación");
+end
+
+// Regla para cliente leal con puntos altos
+rule "Cliente Leal Descuento"
+    when
+        $customer : Customer(loyaltyPoints > 1000, totalPurchases > 2000)
+    then
+        $customer.setDiscount("25% descuento por fidelidad");
+        $customer.setRecommendation("¡Gracias por tu fidelidad! Disfruta de beneficios exclusivos");
+end
+
+// Regla para cliente de riesgo bajo con compras altas
+rule "Cliente Seguro Alto Valor"
+    when
+        $customer : Customer(riskLevel == "LOW", totalPurchases > 8000)
+    then
+        $customer.setCategory("PREMIUM");
+        $customer.setRecommendation("Productos premium recomendados");
+        $customer.setNextAction("Ofrecer línea de crédito aumentada");
+end
+
+// Regla para cliente joven con muchas compras
+rule "Cliente Joven VIP"
+    when
+        $customer : Customer(age < 30, totalPurchases > 3000)
+    then
+        $customer.setCategory("YOUNG_VIP");
+        $customer.setDiscount("18% descuento joven VIP");
+        $customer.setRecommendation("Productos tecnológicos en tendencia");
+end
+
+// Regla para cliente premium con muchos puntos
+rule "Cliente Premium Elite"
+    when
+        $customer : Customer(isPremium == true, loyaltyPoints > 2000)
+    then
+        $customer.setCategory("ELITE");
+        $customer.setDiscount("30% descuento elite");
+        $customer.setRecommendation("Invitación a eventos exclusivos");
+        $customer.setNextAction("Asignar gerente de cuenta personal");
+end
+
+// Regla para cliente con alto score crediticio
+rule "Cliente Credito Excelente"
+    when
+        $customer : Customer(creditScore > 800)
+    then
+        $customer.setRecommendation("Opciones de financiamiento preferenciales");
+        $customer.setNextAction("Ofrecer productos de crédito premium");
+end
+
+// Regla para cliente con múltiples intereses
+rule "Cliente Multi Intereses"
+    when
+        $customer : Customer(interests != null, interests.size() > 3)
+    then
+        $customer.setRecommendation("Productos personalizados según tus intereses");
+        $customer.setNextAction("Enviar catálogo personalizado");
+end

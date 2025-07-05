@@ -1,0 +1,153 @@
+spring:
+  application:
+    name: droolsTest-api
+
+  # Configuración de base de datos por defecto (H2 para desarrollo)
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      pool-name: DroolsTestHikariCP
+
+  # Configuración JPA
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        use_sql_comments: true
+
+  # Configuración H2 Console (solo desarrollo)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  # Configuración de Web (API REST)
+  web:
+    resources:
+      static-locations: classpath:/static/
+      cache:
+        period: 3600
+
+# Configuración del servidor
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+
+# Configuración de logging
+logging:
+  level:
+    com.empresa.drools: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/droolsTest-api.log
+    max-size: 10MB
+    max-history: 30
+
+# Configuración de management y actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+
+# Configuración de CORS
+cors:
+  allowed-origins:
+    - "http://localhost:4200"
+    - "http://localhost:80"
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+  allowed-headers:
+    - "*"
+  allow-credentials: true
+
+# Configuración personalizada de Drools
+drools:
+  rules:
+    directory: rules
+    reload-interval: 30000
+    validation:
+      enabled: true
+      strict-mode: true
+
+---
+# Perfil para Docker
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  # Configuración de base de datos para Docker (PostgreSQL)
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/drools_db}
+    username: ${SPRING_DATASOURCE_USERNAME:drools_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:drools_password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # Configuración JPA para Docker
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Configuración H2 Console (deshabilitada en Docker)
+  h2:
+    console:
+      enabled: false
+
+# Configuración de CORS para Docker
+cors:
+  allowed-origins:
+    - ${CORS_ALLOWED_ORIGINS:http://localhost:4200,http://localhost:80}
+
+# Configuración de logging para Docker
+logging:
+  level:
+    root: INFO
+    com.empresa.drools: ${LOGGING_LEVEL_COM_EMPRESA_DROOLS:INFO}
+  file:
+    name: /app/logs/droolsTest-api.log

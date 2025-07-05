@@ -1,0 +1,235 @@
+<p>rule-builder works!</p>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title class="header-title">
+      <span class="title-content">
+        <mat-icon>engineering</mat-icon>
+        Constructor Visual de Reglas
+      </span>
+      <button
+        mat-icon-button
+        (click)="toggleViewMode()"
+        [matTooltip]="viewMode === 'visual' ? 'Ver código DRL' : 'Vista visual'">
+        <mat-icon>{{ viewMode === 'visual' ? 'code' : 'visibility' }}</mat-icon>
+      </button>
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="card-content">
+    <form [formGroup]="ruleForm" class="form-container">
+      <!-- Información básica -->
+      <div class="basic-info">
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre de la Regla</mat-label>
+          <input matInput formControlName="name" placeholder="Ej: Cliente VIP">
+          <mat-error>El nombre es requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Descripción</mat-label>
+          <input matInput formControlName="description" placeholder="Describe qué hace esta regla">
+        </mat-form-field>
+      </div>
+
+      <!-- Vista Visual -->
+      <div *ngIf="viewMode === 'visual'">
+        <mat-tab-group>
+          <!-- Tab de Plantillas -->
+          <mat-tab label="Plantillas">
+            <div class="templates-container">
+              <p class="templates-help">
+                <mat-icon>lightbulb</mat-icon>
+                Selecciona una plantilla para empezar rápidamente
+              </p>
+
+              <div class="templates-grid">
+                <button
+                  *ngFor="let template of getTemplateKeys()"
+                  mat-stroked-button
+                  class="template-button"
+                  (click)="applyTemplate(template)">
+                  <div class="template-content">
+                    <div class="template-name">{{ templates[template].name }}</div>
+                    <div class="template-description">{{ templates[template].description }}</div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </mat-tab>
+
+          <!-- Tab de Constructor -->
+          <mat-tab label="Constructor Visual">
+            <div class="constructor-container">
+              <!-- Condiciones -->
+              <mat-expansion-panel [expanded]="true">
+                <mat-expansion-panel-header>
+                  <mat-panel-title class="panel-title">
+                    <mat-icon>rule</mat-icon>
+                    Condiciones ({{ conditions.length }})
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="conditions-container">
+                  <div *ngFor="let condition of conditions; let i = index"
+                       class="condition-row">
+
+                    <!-- Conector lógico -->
+                    <mat-form-field *ngIf="i > 0" appearance="outline" class="connector-field">
+                      <mat-select [(value)]="condition.connector" (selectionChange)="updateDRL()">
+                        <mat-option value="AND">Y</mat-option>
+                        <mat-option value="OR">O</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <!-- Campo -->
+                    <mat-form-field appearance="outline" class="field-select">
+                      <mat-label>Campo</mat-label>
+                      <mat-select [(value)]="condition.field" (selectionChange)="updateDRL()">
+                        <mat-option *ngFor="let field of fields" [value]="field.value">
+                          {{ field.label }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <!-- Operador -->
+                    <mat-form-field appearance="outline" class="operator-select">
+                      <mat-label>Operador</mat-label>
+                      <mat-select [(value)]="condition.operator" (selectionChange)="updateDRL()">
+                        <mat-option *ngFor="let op of operators" [value]="op.value">
+                          {{ op.label }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <!-- Valor -->
+                    <mat-form-field appearance="outline" class="value-input">
+                      <mat-label>Valor</mat-label>
+                      <input matInput [(ngModel)]="condition.value"
+                             [ngModelOptions]="{standalone: true}"
+                             (ngModelChange)="updateDRL()"
+                             placeholder="Ingresa el valor">
+                    </mat-form-field>
+
+                    <!-- Eliminar condición -->
+                    <button mat-icon-button
+                            color="warn"
+                            (click)="removeCondition(i)"
+                            *ngIf="conditions.length > 1"
+                            matTooltip="Eliminar condición">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+
+                  <button mat-button (click)="addCondition()" class="add-button">
+                    <mat-icon>add</mat-icon>
+                    Añadir Condición
+                  </button>
+                </div>
+              </mat-expansion-panel>
+
+              <!-- Acciones -->
+              <mat-expansion-panel [expanded]="true">
+                <mat-expansion-panel-header>
+                  <mat-panel-title class="panel-title">
+                    <mat-icon>flash_on</mat-icon>
+                    Acciones ({{ actions.length }})
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="actions-container">
+                  <div *ngFor="let action of actions; let i = index"
+                       class="action-row">
+
+                    <!-- Tipo de acción -->
+                    <mat-form-field appearance="outline" class="action-type-select">
+                      <mat-label>Tipo de Acción</mat-label>
+                      <mat-select [(value)]="action.type" (selectionChange)="updateDRL()">
+                        <mat-option *ngFor="let actionType of actionTypes" [value]="actionType.value">
+                          {{ actionType.label }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <!-- Valor de la acción -->
+                    <mat-form-field appearance="outline" class="action-value-input">
+                      <mat-label>Valor</mat-label>
+                      <input matInput [(ngModel)]="action.value"
+                             [ngModelOptions]="{standalone: true}"
+                             (ngModelChange)="updateDRL()"
+                             [placeholder]="getActionPlaceholder(action.type)">
+                    </mat-form-field>
+
+                    <!-- Eliminar acción -->
+                    <button mat-icon-button
+                            color="warn"
+                            (click)="removeAction(i)"
+                            *ngIf="actions.length > 1"
+                            matTooltip="Eliminar acción">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+
+                  <button mat-button (click)="addAction()" class="add-button">
+                    <mat-icon>add</mat-icon>
+                    Añadir Acción
+                  </button>
+                </div>
+              </mat-expansion-panel>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+
+      <!-- Vista de Código -->
+      <div *ngIf="viewMode === 'code'" class="code-view">
+        <mat-form-field appearance="outline" class="code-field">
+          <mat-label>Código DRL Generado</mat-label>
+          <textarea matInput
+                    [value]="generateDRL()"
+                    readonly
+                    rows="12"
+                    class="code-textarea"
+                    placeholder="El código DRL se generará automáticamente...">
+          </textarea>
+        </mat-form-field>
+
+        <!-- Validación -->
+        <div *ngIf="getValidationErrors().length > 0" class="validation-errors">
+          <mat-chip-listbox>
+            <mat-chip-option *ngFor="let error of getValidationErrors()"
+                             color="warn"
+                             selected>
+              {{ error }}
+            </mat-chip-option>
+          </mat-chip-listbox>
+        </div>
+
+        <div *ngIf="getValidationErrors().length === 0 && ruleForm.get('name')?.value"
+             class="validation-success">
+          <mat-chip-listbox>
+            <mat-chip-option color="primary" selected>
+              ✓ Regla válida
+            </mat-chip-option>
+          </mat-chip-listbox>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Botones de acción -->
+      <div class="form-actions">
+        <button mat-button type="button" (click)="resetForm()">
+          Limpiar
+        </button>
+        <button mat-raised-button
+                color="primary"
+                type="button"
+                [disabled]="!isFormValid()"
+                (click)="onSave()">
+          <mat-icon>save</mat-icon>
+          Guardar Regla
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
