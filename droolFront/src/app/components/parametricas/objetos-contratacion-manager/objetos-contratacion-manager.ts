@@ -290,7 +290,11 @@ export class ObjetosContratacionManager implements OnInit {
     payload['idSubDescripcionContratacion'] !== undefined;
     payload['permiteSubDescripcion'] = tieneSubDescripcion;
 
-    console.log('Payload a enviar:', payload); // Para verificar
+      console.log('=== PAYLOAD A ENVIAR ===');
+  console.log('Payload completo:', payload);
+  console.log('idSubDescripcionContratacion:', payload['idSubDescripcionContratacion']);
+  console.log('permiteSubDescripcion:', payload['permiteSubDescripcion']);
+  console.log('========================');
 
     this.loading = true;
     this.cdr.detectChanges();

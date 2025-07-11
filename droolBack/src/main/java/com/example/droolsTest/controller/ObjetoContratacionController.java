@@ -77,6 +77,8 @@ public class ObjetoContratacionController {
                                                                @RequestParam(defaultValue = "SISTEMA") String usuario) {
         try {
             log.info("PUT /api/objeto-contratacion/{}", id);
+            log.info("Datos recibidos - idSubDescripcion: {}, permiteSubDescripcion: {}", objeto.getIdSubDescripcionContratacion(), objeto.getPermiteSubDescripcion());
+            log.info("objeto: {}",objeto);
             ObjetoContratacion actualizado = objetoService.actualizarObjeto(id, objeto, usuario);
             return ResponseEntity.ok(actualizado);
         } catch (ResourceNotFoundException e) {

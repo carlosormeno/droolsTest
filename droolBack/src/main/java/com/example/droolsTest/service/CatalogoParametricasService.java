@@ -256,6 +256,16 @@ public class CatalogoParametricasService {
 
     @SuppressWarnings("unchecked")
     private List<Integer> obtenerAniosDisponibles(String tableName) {
+        Class<?> clazz = entidadesParametricas.values().stream()
+                .filter(c -> obtenerNombreTabla(c).equals(tableName))
+                .findFirst()
+                .orElse(null);
+
+        if (clazz == null || !tieneAnioVigencia(clazz)) {
+            // Si no tiene el campo anio_vigencia, retornar lista vacía
+            return new ArrayList<>();
+        }
+
         try {
             Query query = entityManager.createNativeQuery(
                     "SELECT DISTINCT anio_vigencia FROM " + tableName +

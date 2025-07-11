@@ -7,6 +7,12 @@
     </div>
 
     <nav class="navigation">
+      <button mat-button [matMenuTriggerFor]="parametricasMenu" routerLinkActive="active-link">
+    <mat-icon>settings</mat-icon>
+    Paramétricas
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+      
       <button mat-button routerLink="/rules" routerLinkActive="active-link">
         <mat-icon>rule</mat-icon>
         Gestor de Reglas
@@ -17,5 +23,78 @@
         Simulador de Clientes
       </button>
     </nav>
+    <mat-menu #parametricasMenu="matMenu" class="parametricas-menu">
+  <!-- Header del menú -->
+  <div class="menu-header">
+    <mat-icon>tune</mat-icon>
+    <span>Gestión de Paramétricas</span>
+  </div>
+  <mat-divider></mat-divider>
+
+  <!-- UIT -->
+  <button mat-menu-item routerLink="/uit-manager">
+    <mat-icon class="menu-icon uit">monetization_on</mat-icon>
+    <span class="menu-text">
+      <span class="menu-title">UIT</span>
+      <span class="menu-subtitle">Unidad Impositiva Tributaria</span>
+    </span>
+  </button>
+
+  <!-- Tipos de Proceso -->
+  <button mat-menu-item routerLink="/tipos-proceso-manager">
+    <mat-icon class="menu-icon proceso">rule</mat-icon>
+    <span class="menu-text">
+      <span class="menu-title">Tipos de Proceso</span>
+      <span class="menu-subtitle">Modalidades de selección</span>
+    </span>
+  </button>
+
+  <!-- Sub-Descripciones -->
+  <button mat-menu-item routerLink="/sub-descripcion-manager">
+    <mat-icon class="menu-icon subdesc">segment</mat-icon>
+    <span class="menu-text">
+      <span class="menu-title">Sub-Descripciones</span>
+      <span class="menu-subtitle">Subcategorías de contratación</span>
+    </span>
+  </button>
+
+  <!-- Objetos de Contratación -->
+  <button mat-menu-item routerLink="/objetos-contratacion-manager">
+    <mat-icon class="menu-icon objeto">category</mat-icon>
+    <span class="menu-text">
+      <span class="menu-title">Objetos de Contratación</span>
+      <span class="menu-subtitle">Bienes, Servicios, Obras</span>
+    </span>
+  </button>
+
+  <!-- Operadores de Monto -->
+  <button mat-menu-item routerLink="/operadores-monto-manager">
+    <mat-icon class="menu-icon operador">calculate</mat-icon>
+    <span class="menu-text">
+      <span class="menu-title">Operadores de Monto</span>
+      <span class="menu-subtitle">Operadores matemáticos</span>
+    </span>
+  </button>
+
+  <!-- Topes -->
+  <button mat-menu-item routerLink="/topes-manager">
+    <mat-icon class="menu-icon topes">analytics</mat-icon>
+    <span class="menu-text">
+      <span class="menu-title">Topes de Montos</span>
+      <span class="menu-subtitle">Límites por combinación</span>
+    </span>
+  </button>
+
+  <mat-divider></mat-divider>
+
+  <!-- Evaluador -->
+  <button mat-menu-item routerLink="/evaluador" class="evaluador-item">
+    <mat-icon class="menu-icon evaluador">science</mat-icon>
+    <span class="menu-text">
+      <span class="menu-title">Evaluador de Paramétricas</span>
+      <span class="menu-subtitle">Simulador y análisis</span>
+    </span>
+  </button>
+</mat-menu>
   </div>
 </mat-toolbar>

@@ -39,20 +39,26 @@ public class ObjetoContratacionService {
     }
 
     public ObjetoContratacion actualizarObjeto(Long id, ObjetoContratacion objetoActualizado, String usuario) {
+
+        log.info("Actualizando objeto de contratación: {}", id);
+        log.info("Actualizando objeto: {}", objetoActualizado);
+        log.info("Actualizando usuario: {}", usuario);
+
         ObjetoContratacion existente = obtenerPorId(id);
 
         if (objetoRepository.existsByCodigoAndEstadoRegistroTrueAndIdNot(objetoActualizado.getCodigo(), id)) {
             throw new OperationNotAllowedException("Ya existe otro objeto con el código: " + objetoActualizado.getCodigo());
         }
-
+        log.info("Existente Entrada: {}", existente);
         existente.setCodigo(objetoActualizado.getCodigo());
         existente.setNombre(objetoActualizado.getNombre());
         existente.setDescripcion(objetoActualizado.getDescripcion());
         existente.setPermiteSubDescripcion(objetoActualizado.getPermiteSubDescripcion());
         existente.setEstado(objetoActualizado.getEstado());
-        existente.setSubDescripcionContratacion(objetoActualizado.getSubDescripcionContratacion());
+        //existente.setSubDescripcionContratacion(objetoActualizado.getSubDescripcionContratacion());
+        existente.setIdSubDescripcionContratacion(objetoActualizado.getIdSubDescripcionContratacion());
         existente.setUpdatedBy(usuario);
-
+        log.info("Existente Salida: {}", existente);
         return objetoRepository.save(existente);
     }
 

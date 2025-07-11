@@ -48,7 +48,7 @@ public class ObjetoContratacion {
     @Builder.Default
     private String estado = "ACTIVO";
 
-    @Column(name = "id_sub_descripcion_contratacion", insertable = false, updatable = false)
+    @Column(name = "id_sub_descripcion_contratacion", insertable = false)
     private Long idSubDescripcionContratacion;
 
     // Auditoría
@@ -72,7 +72,7 @@ public class ObjetoContratacion {
 
     // Relación con SubDescripcionContratacion (muchos a uno) - CORREGIDO SEGÚN SQL
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_sub_descripcion_contratacion", nullable = true)
+    @JoinColumn(name = "id_sub_descripcion_contratacion", nullable = true,insertable = false, updatable = false)
     @ToString.Exclude
     @JsonBackReference("subdescripcion-objetos")
     private SubDescripcionContratacion subDescripcionContratacion;

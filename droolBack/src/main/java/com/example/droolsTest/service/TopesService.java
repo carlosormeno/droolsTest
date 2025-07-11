@@ -75,8 +75,11 @@ public class TopesService {
     }
 
     public Topes actualizarTope(Long id, Topes topeActualizado, String usuario) {
+        //log.info("Creando tope para año {} con monto {}", topeActualizado.getAnioVigencia(), tope.getMonto());
+        log.info("tope: {}", topeActualizado);
         Topes existente = obtenerPorId(id);
 
+        poblarEntidadesDesdeIds(topeActualizado);
         validarRelaciones(topeActualizado);
 
         if (existeCombinacionUnica(topeActualizado, id)) {

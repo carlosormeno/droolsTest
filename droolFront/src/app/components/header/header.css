@@ -77,3 +77,118 @@
     justify-content: center;
   }
 }
+
+/* CSS para el menú de paramétricas */
+.parametricas-menu {
+  min-width: 280px;
+  max-width: 320px;
+}
+
+.menu-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+  margin: -8px -8px 8px -8px;
+}
+
+.menu-header mat-icon {
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+.menu-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.menu-title {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.menu-subtitle {
+  font-size: 11px;
+  color: #666;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.menu-icon {
+  margin-right: 12px !important;
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* Colores específicos por módulo */
+.menu-icon.uit {
+  color: #4caf50; /* Verde */
+}
+
+.menu-icon.proceso {
+  color: #2196f3; /* Azul */
+}
+
+.menu-icon.subdesc {
+  color: #ff9800; /* Naranja */
+}
+
+.menu-icon.objeto {
+  color: #9c27b0; /* Púrpura */
+}
+
+.menu-icon.operador {
+  color: #f44336; /* Rojo */
+}
+
+.menu-icon.topes {
+  color: #607d8b; /* Azul gris */
+}
+
+.menu-icon.evaluador {
+  color: #e91e63; /* Rosa */
+}
+
+/* Hover effects */
+.mat-mdc-menu-item:hover .menu-icon {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+.mat-mdc-menu-item:hover .menu-title {
+  color: #1976d2;
+  transition: color 0.2s ease;
+}
+
+/* Evaluador especial */
+.evaluador-item {
+  background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+  border-radius: 4px;
+  margin: 4px 8px;
+}
+
+.evaluador-item:hover {
+  background: linear-gradient(135deg, #667eea30 0%, #764ba230 100%);
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .parametricas-menu {
+    min-width: 250px;
+    max-width: 280px;
+  }
+  
+  .menu-title {
+    font-size: 13px;
+  }
+  
+  .menu-subtitle {
+    font-size: 10px;
+  }
+}
