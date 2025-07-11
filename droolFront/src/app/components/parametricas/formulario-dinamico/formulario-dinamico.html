@@ -1,0 +1,215 @@
+<p>formulario-dinamico works!</p>
+<!-- formulario-dinamico.html -->
+<div class="formulario-dinamico-container">
+
+  <!-- Header del formulario -->
+  <div class="formulario-header">
+    <h3>
+      <mat-icon>{{ modoEdicion ? 'edit' : 'add' }}</mat-icon>
+      {{ tituloFormulario }}
+    </h3>
+    <p *ngIf="subtitulo" class="formulario-subtitulo">{{ subtitulo }}</p>
+  </div>
+
+  <!-- Formulario por secciones -->
+  <form [formGroup]="formulario" (ngSubmit)="onSubmit()" class="formulario-form">
+
+    <!-- Iterar por cada sección -->
+    <div *ngFor="let seccion of secciones; trackBy: trackBySeccion" class="formulario-seccion">
+
+      <!-- Título de sección (solo si hay más de una sección) -->
+      <div *ngIf="secciones.length > 1" class="seccion-header">
+        <h4>{{ seccion }}</h4>
+        <mat-divider></mat-divider>
+      </div>
+
+      <!-- Campos de la sección -->
+      <div class="campos-grid">
+        <ng-container *ngFor="let campo of camposOrganizados[seccion]; trackBy: trackByCampo">
+
+          <!-- Campo de texto -->
+          <mat-form-field
+            *ngIf="campo.tipo === TipoCampo.TEXT || campo.tipo === TipoCampo.EMAIL"
+            appearance="outline"
+            [class]="'campo-' + campo.ancho">
+
+            <mat-label>{{ campo.etiqueta }}</mat-label>
+            <input matInput
+                   [formControlName]="campo.nombre"
+                   [type]="campo.tipo === TipoCampo.EMAIL ? 'email' : 'text'"
+                   [placeholder]="obtenerPlaceholder(campo)"
+                   [readonly]="campo.soloLectura">
+
+            <mat-icon matSuffix *ngIf="campo.icono">{{ campo.icono }}</mat-icon>
+            <mat-hint *ngIf="campo.ayuda">{{ campo.ayuda }}</mat-hint>
+            <mat-error *ngIf="tieneError(campo)">
+              {{ obtenerErrorMensaje(campo) }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Campo numérico -->
+          <mat-form-field
+            *ngIf="campo.tipo === TipoCampo.NUMBER"
+            appearance="outline"
+            [class]="'campo-' + campo.ancho">
+
+            <mat-label>{{ campo.etiqueta }}</mat-label>
+            <input matInput
+                   [formControlName]="campo.nombre"
+                   type="number"
+                   [step]="campo.validaciones?.step || 'any'"
+                   [min]="campo.validaciones?.min || null"
+                   [max]="campo.validaciones?.max || null"
+                   [placeholder]="obtenerPlaceholder(campo)"
+                   [readonly]="campo.soloLectura">
+
+            <span matPrefix *ngIf="campo.prefijo">{{ campo.prefijo }}&nbsp;</span>
+            <span matSuffix *ngIf="campo.sufijo">&nbsp;{{ campo.sufijo }}</span>
+            <mat-icon matSuffix *ngIf="campo.icono && !campo.sufijo">{{ campo.icono }}</mat-icon>
+            <mat-hint *ngIf="campo.ayuda">{{ campo.ayuda }}</mat-hint>
+            <mat-error *ngIf="tieneError(campo)">
+              {{ obtenerErrorMensaje(campo) }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Campo de selección -->
+          <mat-form-field
+            *ngIf="campo.tipo === TipoCampo.SELECT"
+            appearance="outline"
+            [class]="'campo-' + campo.ancho">
+
+            <mat-label>{{ campo.etiqueta }}</mat-label>
+            <mat-select [formControlName]="campo.nombre"
+                        [placeholder]="obtenerPlaceholder(campo)"
+                        [disabled]="campo.soloLectura  || false">
+
+              <!-- <mat-option *ngIf="!campo.requerido" [value]="null">
+                -- Seleccione --
+              </mat-option> -->
+
+              <!-- Opción por defecto solo si no hay opciones configuradas -->
+              <mat-option *ngIf="!campo.requerido && (!campo.opciones || campo.opciones.length === 0)" [value]="null">
+                -- Sin opciones disponibles --
+              </mat-option>
+
+              <mat-option *ngFor="let opcion of campo.opciones; trackBy: trackByOpcion"
+                          [value]="opcion.valor">
+                {{ opcion.etiqueta }}
+              </mat-option>
+            </mat-select>
+
+            <mat-icon matSuffix *ngIf="campo.icono">{{ campo.icono }}</mat-icon>
+            <mat-hint *ngIf="campo.ayuda">{{ campo.ayuda }}</mat-hint>
+            <mat-error *ngIf="tieneError(campo)">
+              {{ obtenerErrorMensaje(campo) }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Campo de fecha -->
+          <mat-form-field
+            *ngIf="campo.tipo === TipoCampo.DATE"
+            appearance="outline"
+            [class]="'campo-' + campo.ancho">
+
+            <mat-label>{{ campo.etiqueta }}</mat-label>
+            <input matInput
+                   [matDatepicker]="picker"
+                   [formControlName]="campo.nombre"
+                   [min]="campo.validaciones?.fechaMin"
+                   [max]="campo.validaciones?.fechaMax"
+                   [readonly]="campo.soloLectura">
+
+            <mat-datepicker-toggle matSuffix [for]="picker" [disabled]="campo.soloLectura"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-hint *ngIf="campo.ayuda">{{ campo.ayuda }}</mat-hint>
+            <mat-error *ngIf="tieneError(campo)">
+              {{ obtenerErrorMensaje(campo) }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Campo de área de texto -->
+          <mat-form-field
+            *ngIf="campo.tipo === TipoCampo.TEXTAREA"
+            appearance="outline"
+            [class]="'campo-' + campo.ancho">
+
+            <mat-label>{{ campo.etiqueta }}</mat-label>
+            <textarea matInput
+                      [formControlName]="campo.nombre"
+                      [rows]="campo.validaciones?.filas || 3"
+                      [placeholder]="obtenerPlaceholder(campo)"
+                      [readonly]="campo.soloLectura">
+            </textarea>
+
+            <mat-hint *ngIf="campo.ayuda">{{ campo.ayuda }}</mat-hint>
+            <mat-error *ngIf="tieneError(campo)">
+              {{ obtenerErrorMensaje(campo) }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Campo booleano (checkbox) -->
+          <div *ngIf="campo.tipo === TipoCampo.BOOLEAN"
+               [class]="'campo-boolean campo-' + campo.ancho">
+
+            <mat-checkbox [formControlName]="campo.nombre"
+                          [disabled]="campo.soloLectura || false">
+              {{ campo.etiqueta }}
+            </mat-checkbox>
+
+            <div *ngIf="campo.ayuda" class="checkbox-ayuda">
+              <small>{{ campo.ayuda }}</small>
+            </div>
+          </div>
+
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Acciones del formulario -->
+    <div class="formulario-acciones">
+      <mat-divider></mat-divider>
+
+      <div class="acciones-buttons">
+        <!-- Botón Guardar -->
+        <button mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="loading || !formularioValido">
+          <span *ngIf="loading">
+            <mat-spinner diameter="20"></mat-spinner>
+          </span>
+          <mat-icon *ngIf="!loading">{{ modoEdicion ? 'save' : 'add' }}</mat-icon>
+          {{ loading ? 'Guardando...' : (modoEdicion ? 'Actualizar' : 'Crear') }}
+        </button>
+
+        <!-- Botón Limpiar -->
+        <button mat-button
+                type="button"
+                (click)="onLimpiar()"
+                [disabled]="loading || !tieneCambios">
+          <mat-icon>refresh</mat-icon>
+          Limpiar
+        </button>
+
+        <!-- Botón Cancelar -->
+        <button mat-button
+                color="warn"
+                type="button"
+                (click)="onCancelar()"
+                [disabled]="loading">
+          <mat-icon>close</mat-icon>
+          Cancelar
+        </button>
+      </div>
+
+      <!-- Información adicional -->
+      <div class="formulario-info">
+        <small>
+          <mat-icon class="info-icon">info</mat-icon>
+          Los campos marcados con * son obligatorios
+        </small>
+      </div>
+    </div>
+
+  </form>
+</div>
