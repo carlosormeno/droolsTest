@@ -1,0 +1,252 @@
+/* formulario-dinamico.css */
+
+.formulario-dinamico-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Header del formulario */
+.formulario-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.formulario-header h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 8px 0;
+  color: #1976d2;
+}
+
+.formulario-subtitulo {
+  color: #666;
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Formulario */
+.formulario-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Secciones */
+.formulario-seccion {
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+}
+
+.seccion-header {
+  margin-bottom: 16px;
+}
+
+.seccion-header h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Grid de campos */
+.campos-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+/* Anchos de campos */
+.campo-completo {
+  grid-column: span 12;
+}
+
+.campo-medio {
+  grid-column: span 6;
+}
+
+.campo-tercio {
+  grid-column: span 4;
+}
+
+.campo-cuarto {
+  grid-column: span 3;
+}
+
+.campo-auto {
+  grid-column: span 6; /* Por defecto medio */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .campo-medio,
+  .campo-tercio,
+  .campo-cuarto,
+  .campo-auto {
+    grid-column: span 12;
+  }
+
+  .campos-grid {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .formulario-dinamico-container {
+    padding: 12px;
+  }
+
+  .formulario-seccion {
+    padding: 12px;
+  }
+}
+
+/* Campos especiales */
+.campo-boolean {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-self: center;
+  padding: 16px 0;
+}
+
+.checkbox-ayuda {
+  margin-top: 4px;
+}
+
+.checkbox-ayuda small {
+  color: #666;
+  font-size: 12px;
+}
+
+/* Form fields personalizados */
+mat-form-field {
+  width: 100%;
+}
+
+mat-form-field.mat-form-field {
+  margin-bottom: 8px;
+}
+
+/* Iconos */
+.info-icon {
+  font-size: 16px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+/* Acciones del formulario */
+.formulario-acciones {
+  margin-top: 24px;
+  padding-top: 16px;
+}
+
+.acciones-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.formulario-info {
+  margin-top: 16px;
+  text-align: center;
+  color: #666;
+}
+
+/* Estados de campos */
+mat-form-field.mat-form-field-invalid .mat-form-field-outline {
+  color: #f44336;
+}
+
+mat-form-field.mat-focused .mat-form-field-outline {
+  color: #1976d2;
+}
+
+/* Spinners */
+mat-spinner {
+  margin-right: 8px;
+}
+
+/* Mejoras visuales */
+.formulario-seccion:first-child {
+  border-color: #1976d2;
+  background: linear-gradient(135deg, #f8f9ff 0%, #fafafa 100%);
+}
+
+.seccion-header mat-divider {
+  margin-top: 8px;
+}
+
+/* Animaciones suaves */
+.formulario-seccion,
+mat-form-field,
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+.formulario-seccion:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Estados disabled */
+mat-form-field.mat-form-field-disabled {
+  opacity: 0.6;
+}
+
+button:disabled {
+  opacity: 0.6;
+}
+
+/* Validación visual */
+mat-form-field.mat-form-field-invalid {
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* Mejoras de accesibilidad */
+button:focus,
+mat-form-field:focus-within {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+/* Personalización de mat-chips para errores */
+.error-chip {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* Estilos para campos requeridos */
+mat-form-field.mat-form-field-required mat-label::after {
+  content: ' *';
+  color: #f44336;
+}
+
+/* Loading overlay para formulario */
+.formulario-form[aria-busy="true"] {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.formulario-form[aria-busy="true"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 1000;
+}

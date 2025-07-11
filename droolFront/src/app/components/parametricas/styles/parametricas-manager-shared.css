@@ -1,0 +1,353 @@
+/* parametricas-manager-shared.css */
+/* Estilos compartidos para todos los managers de paramétricas */
+
+/* ================================================
+   CONTENEDOR PRINCIPAL
+   ================================================ */
+
+   .uit-manager-container,
+   .tipos-proceso-manager-container,
+   .objetos-contratacion-manager-container,
+   .operadores-monto-manager-container,
+   .topes-manager-container {
+     max-width: 1200px;
+     margin: 0 auto;
+     padding: 20px;
+   }
+   
+   /* ================================================
+      HEADER SECTION
+      ================================================ */
+   
+   .header-section {
+     margin-bottom: 24px;
+   }
+   
+   .header-section mat-card-title {
+     display: flex;
+     align-items: center;
+     gap: 12px;
+     color: #1976d2;
+     font-size: 24px;
+     font-weight: 500;
+   }
+   
+   .header-section mat-card-subtitle {
+     color: #666;
+     margin-top: 8px;
+     font-size: 14px;
+   }
+   
+   .header-section mat-card-actions {
+     display: flex;
+     gap: 12px;
+     flex-wrap: wrap;
+     margin-top: 16px;
+   }
+   
+   /* ================================================
+      TABLA SECTION
+      ================================================ */
+   
+   .tabla-section {
+     margin-bottom: 24px;
+   }
+   
+   .loading-container {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     padding: 60px 20px;
+     text-align: center;
+   }
+   
+   .loading-container p {
+     margin-top: 16px;
+     color: #666;
+     font-size: 16px;
+   }
+   
+   .tabla-wrapper {
+     overflow-x: auto;
+     border-radius: 8px;
+   }
+   
+   .tabla-wrapper table {
+     width: 100%;
+     border-radius: 8px;
+     overflow: hidden;
+   }
+   
+   .tabla-fila {
+     cursor: pointer;
+     transition: background-color 0.2s ease;
+   }
+   
+   .tabla-fila:hover {
+     background-color: #f5f5f5;
+   }
+   
+   /* Acciones en tabla */
+   .mat-column-acciones {
+     width: 120px;
+     text-align: center;
+   }
+   
+   .tabla-wrapper td.mat-cell:last-child,
+   .tabla-wrapper th.mat-header-cell:last-child {
+     padding-right: 16px;
+   }
+   
+   /* ================================================
+      SIN DATOS
+      ================================================ */
+   
+   .sin-datos {
+     text-align: center;
+     padding: 60px 20px;
+     color: #666;
+   }
+   
+   .sin-datos .empty-icon {
+     font-size: 64px;
+     color: #bbb;
+     margin-bottom: 16px;
+     display: block;
+   }
+   
+   .sin-datos h3 {
+     margin: 0 0 8px 0;
+     color: #333;
+     font-size: 20px;
+   }
+   
+   .sin-datos p {
+     margin: 0 0 20px 0;
+     font-size: 14px;
+   }
+   
+   /* ================================================
+      FORMULARIO SECTION
+      ================================================ */
+   
+   .formulario-section {
+     margin-top: 24px;
+   }
+   
+   .formulario-section mat-card-title {
+     display: flex;
+     align-items: center;
+     gap: 8px;
+     color: #1976d2;
+   }
+   
+   .formulario-fallback {
+     text-align: center;
+     padding: 40px 20px;
+     color: #666;
+   }
+   
+   .formulario-fallback p {
+     margin-bottom: 16px;
+   }
+   
+   /* ================================================
+      BOTONES Y ACCIONES
+      ================================================ */
+   
+   button[mat-icon-button] {
+     margin: 0 4px;
+   }
+   
+   button[mat-raised-button] {
+     min-width: 140px;
+   }
+   
+   /* Estados de botones */
+   button:disabled {
+     opacity: 0.6;
+     cursor: not-allowed;
+   }
+   
+   /* ================================================
+      SPINNERS Y LOADING
+      ================================================ */
+   
+   mat-spinner {
+     margin: 0 8px;
+   }
+   
+   /* Spinner en botones */
+   button mat-spinner {
+     margin-right: 8px;
+     margin-left: 0;
+   }
+   
+   /* ================================================
+      RESPONSIVE DESIGN
+      ================================================ */
+   
+   @media (max-width: 768px) {
+     .uit-manager-container,
+     .tipos-proceso-manager-container,
+     .objetos-contratacion-manager-container,
+     .operadores-monto-manager-container,
+     .topes-manager-container {
+       padding: 16px;
+     }
+   
+     .header-section mat-card-actions {
+       flex-direction: column;
+     }
+   
+     .header-section mat-card-actions button {
+       width: 100%;
+     }
+   
+     .tabla-wrapper {
+       font-size: 14px;
+     }
+     
+     .tabla-wrapper .mat-column-acciones {
+       width: 100px;
+     }
+   }
+   
+   @media (max-width: 480px) {
+     .header-section mat-card-title {
+       font-size: 20px;
+       text-align: center;
+     }
+   
+     .header-section mat-card-subtitle {
+       text-align: center;
+     }
+   
+     .sin-datos .empty-icon {
+       font-size: 48px;
+     }
+   
+     button[mat-raised-button] {
+       min-width: unset;
+       width: 100%;
+     }
+   }
+   
+   /* ================================================
+      MEJORAS VISUALES
+      ================================================ */
+   
+   /* Sombras suaves */
+   .header-section mat-card,
+   .tabla-section mat-card,
+   .formulario-section mat-card {
+     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+     border-radius: 8px;
+   }
+   
+   /* Hover effects */
+   .header-section mat-card:hover,
+   .formulario-section mat-card:hover {
+     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+     transition: box-shadow 0.2s ease;
+   }
+   
+   /* Iconos en títulos */
+   .header-section mat-icon,
+   .formulario-section mat-icon {
+     font-size: 28px;
+     width: 28px;
+     height: 28px;
+   }
+   
+   /* ================================================
+      ESTADOS Y ANIMACIONES
+      ================================================ */
+   
+   /* Fade in para contenido */
+   .tabla-wrapper,
+   .formulario-section {
+     animation: fadeIn 0.3s ease-in-out;
+   }
+   
+   @keyframes fadeIn {
+     from {
+       opacity: 0;
+       transform: translateY(10px);
+     }
+     to {
+       opacity: 1;
+       transform: translateY(0);
+     }
+   }
+   
+   /* Loading state */
+   .loading-container mat-spinner {
+     margin-bottom: 16px;
+   }
+   
+   /* ================================================
+      TOOLTIPS Y ACCESIBILIDAD
+      ================================================ */
+   
+   /* Mejor contraste para tooltips */
+   .mat-tooltip {
+     font-size: 12px;
+   }
+   
+   /* Focus states mejorados */
+   button:focus,
+   .tabla-fila:focus {
+     outline: 2px solid #1976d2;
+     outline-offset: 2px;
+   }
+   
+   /* ================================================
+      UTILIDADES
+      ================================================ */
+   
+   .text-center {
+     text-align: center;
+   }
+   
+   .mb-16 {
+     margin-bottom: 16px;
+   }
+   
+   .mt-16 {
+     margin-top: 16px;
+   }
+   
+   .full-width {
+     width: 100%;
+   }
+   
+   /* ================================================
+      COLORES ESPECÍFICOS POR ENTIDAD
+      ================================================ */
+   
+   /* UIT - Azul */
+   .uit-manager-container .header-section mat-card-title {
+     color: #1976d2;
+   }
+   
+   /* Tipos de Proceso - Verde */
+   .tipos-proceso-manager-container .header-section mat-card-title {
+     color: #388e3c;
+   }
+   
+   /* Objetos de Contratación - Naranja */
+   .objetos-contratacion-manager-container .header-section mat-card-title {
+     color: #f57c00;
+   }
+   
+   /* Operadores Monto - Púrpura */
+   .operadores-monto-manager-container .header-section mat-card-title {
+     color: #7b1fa2;
+   }
+   
+   /* Topes - Rojo */
+   .topes-manager-container .header-section mat-card-title {
+     color: #d32f2f;
+   }
