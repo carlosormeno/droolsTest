@@ -1,6 +1,7 @@
 package com.example.droolsTest.service;
 
 import com.example.droolsTest.entity.*;
+import com.example.droolsTest.exception.ResourceNotFoundException;
 import com.example.droolsTest.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +40,32 @@ public class OperadoresMontoService {
 
         operador.setCreatedBy(usuario);
         operador.setUpdatedBy(usuario);
+        operador.setEstadoRegistro(true);
 
         return operadoresRepository.save(operador);
+    }
+
+    public OperadoresMonto actualizarOperador(Long id, OperadoresMonto operadorActualizado, String usuario) {
+        OperadoresMonto existente = obtenerPorId(id);
+
+        if (operadoresRepository.existsByCodigoAndEstadoRegistroTrueAndIdNot(operadorActualizado.getCodigo(), id)) {
+            throw new IllegalArgumentException("Ya existe otro operador con el código: " + operadorActualizado.getCodigo());
+        }
+
+        existente.setCodigo(operadorActualizado.getCodigo());
+        existente.setNombre(operadorActualizado.getNombre());
+        existente.setSimbolo(operadorActualizado.getSimbolo());
+        existente.setDescripcion(operadorActualizado.getDescripcion());
+        existente.setEstado(operadorActualizado.getEstado());
+        existente.setUpdatedBy(usuario);
+
+        return operadoresRepository.save(existente);
+    }
+
+    @Transactional(readOnly = true)
+    public OperadoresMonto obtenerPorId(Long id) {
+        return operadoresRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Operador no encontrado con ID: " + id));
     }
 
     /**
@@ -53,10 +78,17 @@ public class OperadoresMontoService {
 
     /**
      * Obtener operadores en uso
-     */
+
     @Transactional(readOnly = true)
     public List<OperadoresMonto> obtenerOperadoresEnUso() {
         return operadoresRepository.findOperadoresEnUso();
+    }*/
+
+    public void eliminarOperador(Long id, String usuario) {
+        OperadoresMonto existente = obtenerPorId(id);
+        existente.setEstadoRegistro(false);
+        existente.setUpdatedBy(usuario);
+        operadoresRepository.save(existente);
     }
 
 }

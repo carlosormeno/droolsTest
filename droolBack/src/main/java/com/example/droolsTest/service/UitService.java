@@ -45,6 +45,7 @@ public class UitService {
         // Establecer datos de auditoría
         uit.setCreatedBy(usuario);
         uit.setUpdatedBy(usuario);
+        uit.setEstadoRegistro(true);
 
         Uit uitGuardada = uitRepository.save(uit);
         log.info("UIT creada con ID: {}", uitGuardada.getId());
@@ -58,8 +59,7 @@ public class UitService {
     public Uit actualizarUit(Long id, Uit uitActualizada, String usuario) {
         log.info("Actualizando UIT con ID: {}", id);
 
-        Uit uitExistente = uitRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("UIT no encontrada con ID: " + id));
+        Uit uitExistente = obtenerPorId(id);
 
         // Validar que no exista otra UIT para el mismo año (excluyendo la actual)
         Optional<Uit> uitDuplicada = uitRepository.findByAnioVigenciaAndEstadoAndEstadoRegistroTrue(

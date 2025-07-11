@@ -1,6 +1,7 @@
 package com.example.droolsTest.controller;
 
 import com.example.droolsTest.entity.*;
+import com.example.droolsTest.exception.ResourceNotFoundException;
 import com.example.droolsTest.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,18 +45,39 @@ public class TipoProcesoController {
      * Obtener tipos de proceso por año
      */
     @GetMapping
-    public ResponseEntity<List<TipoProcesoSeleccion>> obtenerTiposProceso(@RequestParam Integer anio) {
+    public ResponseEntity<List<TipoProcesoSeleccion>> obtenerTiposProceso(@RequestParam(required = false) Integer anio) {
         log.debug("GET /api/tipo-proceso?anio={}", anio);
+        List<TipoProcesoSeleccion> tipos;
+
+        if (anio != null) {
+            // Si se proporciona año, filtrar por año
+            tipos = tipoProcesoService.obtenerTiposProcesoActivos(anio);
+            log.debug("Obtenidos {} tipos de proceso para año {}", tipos.size(), anio);
+        } else {
+            // Si no se proporciona año, obtener todos los activos
+            tipos = tipoProcesoService.obtenerTodosTiposProcesoActivos();
+            log.debug("Obtenidos {} tipos de proceso (todos los años)", tipos.size());
+        }
+        return ResponseEntity.ok(tipos);
+    }
+
+    @GetMapping("/activos")
+    public ResponseEntity<List<TipoProcesoSeleccion>> listarTiposProceso() {
+        log.debug("GET /api/tipo-proceso");
+        List<TipoProcesoSeleccion> tipos = tipoProcesoService.obtenerTodosTiposProcesoActivos();
+        return ResponseEntity.ok(tipos);
+    }
+
+    @GetMapping("/por-anio/{anio}")
+    public ResponseEntity<List<TipoProcesoSeleccion>> obtenerTiposPorAnio(@PathVariable Integer anio) {
+        log.debug("GET /api/tipo-proceso/por-anio/{}", anio);
         List<TipoProcesoSeleccion> tipos = tipoProcesoService.obtenerTiposProcesoActivos(anio);
         return ResponseEntity.ok(tipos);
     }
 
-    /**
-     * Obtener años disponibles
-     */
-    @GetMapping("/anios")
+    @GetMapping("/anios-disponibles")
     public ResponseEntity<List<Integer>> obtenerAniosDisponibles() {
-        log.debug("GET /api/tipo-proceso/anios");
+        log.debug("GET /api/tipo-proceso/anios-disponibles");
         List<Integer> anios = tipoProcesoService.obtenerAniosDisponibles();
         return ResponseEntity.ok(anios);
     }
@@ -70,6 +92,17 @@ public class TipoProcesoController {
         return ResponseEntity.ok(tipos);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TipoProcesoSeleccion> obtenerTipoProcesoPorId(@PathVariable Long id) {
+        try {
+            log.debug("GET /api/tipo-proceso/{}", id);
+            TipoProcesoSeleccion tipo = tipoProcesoService.obtenerPorId(id);
+            return ResponseEntity.ok(tipo);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     /**
      * Actualizar tipo de proceso
      */
@@ -81,8 +114,26 @@ public class TipoProcesoController {
             log.info("PUT /api/tipo-proceso/{}", id);
             TipoProcesoSeleccion actualizado = tipoProcesoService.actualizarTipoProceso(id, tipoProceso, usuario);
             return ResponseEntity.ok(actualizado);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (IllegalArgumentException e) {
             log.warn("Error al actualizar tipo proceso: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * Eliminar tipo de proceso (borrado lógico)
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarTipoProceso(@PathVariable Long id,
+                                                    @RequestParam(defaultValue = "SISTEMA") String usuario) {
+        try {
+            log.info("DELETE /api/tipo-proceso/{}", id);
+            tipoProcesoService.eliminarTipoProceso(id, usuario);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            log.warn("Error al eliminar tipo proceso: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }

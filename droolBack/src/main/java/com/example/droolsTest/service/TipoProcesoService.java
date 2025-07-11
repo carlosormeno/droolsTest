@@ -2,6 +2,7 @@ package com.example.droolsTest.service;
 
 import com.example.droolsTest.entity.*;
 import com.example.droolsTest.entity.DTO.*;
+import com.example.droolsTest.exception.ResourceNotFoundException;
 import com.example.droolsTest.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,7 @@ public class TipoProcesoService {
 
         tipoProceso.setCreatedBy(usuario);
         tipoProceso.setUpdatedBy(usuario);
+        tipoProceso.setEstadoRegistro(true);
 
         TipoProcesoSeleccion guardado = tipoProcesoRepository.save(tipoProceso);
         log.info("Tipo de proceso creado con ID: {}", guardado.getId());
@@ -50,8 +52,7 @@ public class TipoProcesoService {
      * Actualizar tipo de proceso
      */
     public TipoProcesoSeleccion actualizarTipoProceso(Long id, TipoProcesoSeleccion tipoProcesoActualizado, String usuario) {
-        TipoProcesoSeleccion existente = tipoProcesoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Tipo de proceso no encontrado con ID: " + id));
+        TipoProcesoSeleccion existente = obtenerPorId(id);
 
         // Validar duplicado excluyendo el actual
         if (tipoProcesoRepository.existsByCodigoAndAnioVigenciaAndEstadoRegistroTrueAndIdNot(
@@ -71,12 +72,22 @@ public class TipoProcesoService {
         return tipoProcesoRepository.save(existente);
     }
 
+    @Transactional(readOnly = true)
+    public TipoProcesoSeleccion obtenerPorId(Long id) {
+        return tipoProcesoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de proceso no encontrado con ID: " + id));
+    }
     /**
      * Obtener tipos de proceso activos por año
      */
     @Transactional(readOnly = true)
     public List<TipoProcesoSeleccion> obtenerTiposProcesoActivos(Integer anio) {
         return tipoProcesoRepository.findByAnioVigenciaAndEstadoAndEstadoRegistroTrueOrderByNombre(anio, "ACTIVO");
+    }
+
+    @Transactional(readOnly = true)
+    public List<TipoProcesoSeleccion> obtenerTodosTiposProcesoActivos() {
+        return tipoProcesoRepository.findByEstadoAndEstadoRegistroTrueOrderByNombre("ACTIVO");
     }
 
     /**
@@ -93,6 +104,24 @@ public class TipoProcesoService {
     @Transactional(readOnly = true)
     public List<TipoProcesoSeleccion> obtenerTiposProcesoConTopes(Integer anio) {
         return tipoProcesoRepository.findTiposProcesoConTopesVigentes(anio);
+    }
+
+    /**
+     * Eliminar tipo de proceso (borrado lógico)
+     */
+    public void eliminarTipoProceso(Long id, String usuario) {
+        log.info("Eliminando lógicamente tipo de proceso con ID: {}", id);
+
+        TipoProcesoSeleccion tipoProceso = tipoProcesoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Tipo de proceso no encontrado con ID: " + id));
+
+        // Realizar borrado lógico
+        tipoProceso.setEstadoRegistro(false);
+        tipoProceso.setUpdatedBy(usuario);
+        tipoProceso.setUpdatedAt(LocalDateTime.now());
+
+        tipoProcesoRepository.save(tipoProceso);
+        log.info("Tipo de proceso eliminado lógicamente con ID: {}", id);
     }
 
 }

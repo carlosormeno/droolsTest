@@ -1,6 +1,8 @@
 package com.example.droolsTest.controller;
 
 import com.example.droolsTest.entity.*;
+import com.example.droolsTest.exception.OperationNotAllowedException;
+import com.example.droolsTest.exception.ResourceNotFoundException;
 import com.example.droolsTest.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +26,6 @@ public class ObjetoContratacionController {
 
     private final ObjetoContratacionService objetoService;
 
-    /**
-     * Crear nuevo objeto de contratación
-     */
     @PostMapping
     public ResponseEntity<ObjetoContratacion> crearObjeto(@Valid @RequestBody ObjetoContratacion objeto,
                                                           @RequestParam(defaultValue = "SISTEMA") String usuario) {
@@ -34,15 +33,12 @@ public class ObjetoContratacionController {
             log.info("POST /api/objeto-contratacion - Creando objeto: {}", objeto.getCodigo());
             ObjetoContratacion creado = objetoService.crearObjeto(objeto, usuario);
             return ResponseEntity.status(HttpStatus.CREATED).body(creado);
-        } catch (IllegalArgumentException e) {
+        } catch (OperationNotAllowedException e) {
             log.warn("Error al crear objeto: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
-    /**
-     * Listar objetos activos
-     */
     @GetMapping
     public ResponseEntity<List<ObjetoContratacion>> listarObjetosActivos() {
         log.debug("GET /api/objeto-contratacion");
@@ -50,30 +46,31 @@ public class ObjetoContratacionController {
         return ResponseEntity.ok(objetos);
     }
 
-    /**
-     * Obtener objetos que permiten sub-descripción
-     */
-    @GetMapping("/con-sub-descripcion")
-    public ResponseEntity<List<ObjetoContratacion>> obtenerObjetosConSubDescripcion() {
-        log.debug("GET /api/objeto-contratacion/con-sub-descripcion");
-        List<ObjetoContratacion> objetos = objetoService.obtenerObjetosConSubDescripcion();
+    @GetMapping("/paginado")
+    public ResponseEntity<Page<ObjetoContratacion>> listarObjetosPaginado(Pageable pageable) {
+        log.debug("GET /api/objeto-contratacion/paginado");
+        Page<ObjetoContratacion> objetos = objetoService.obtenerObjetosActivos(pageable);
         return ResponseEntity.ok(objetos);
     }
 
-    /**
-     * Obtener objeto con sub-descripciones cargadas
-     */
-    @GetMapping("/{id}/completo")
-    public ResponseEntity<ObjetoContratacion> obtenerObjetoCompleto(@PathVariable Long id) {
-        log.debug("GET /api/objeto-contratacion/{}/completo", id);
-        Optional<ObjetoContratacion> objeto = objetoService.obtenerObjetoConSubDescripciones(id);
-        return objeto.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/con-sub-descripcion")
+    public ResponseEntity<Page<ObjetoContratacion>> obtenerObjetosConSubDescripcion(Pageable pageable) {
+        log.debug("GET /api/objeto-contratacion/con-sub-descripcion");
+        Page<ObjetoContratacion> objetos = objetoService.obtenerObjetosConSubDescripcion(pageable);
+        return ResponseEntity.ok(objetos);
     }
 
-    /**
-     * Actualizar objeto
-     */
+    @GetMapping("/{id}")
+    public ResponseEntity<ObjetoContratacion> obtenerObjetoPorId(@PathVariable Long id) {
+        try {
+            log.debug("GET /api/objeto-contratacion/{}", id);
+            ObjetoContratacion objeto = objetoService.obtenerPorId(id);
+            return ResponseEntity.ok(objeto);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<ObjetoContratacion> actualizarObjeto(@PathVariable Long id,
                                                                @Valid @RequestBody ObjetoContratacion objeto,
@@ -82,8 +79,25 @@ public class ObjetoContratacionController {
             log.info("PUT /api/objeto-contratacion/{}", id);
             ObjetoContratacion actualizado = objetoService.actualizarObjeto(id, objeto, usuario);
             return ResponseEntity.ok(actualizado);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (OperationNotAllowedException e) {
             log.warn("Error al actualizar objeto: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarObjeto(@PathVariable Long id,
+                                               @RequestParam(defaultValue = "SISTEMA") String usuario) {
+        try {
+            log.info("DELETE /api/objeto-contratacion/{}", id);
+            objetoService.eliminarObjeto(id, usuario);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (OperationNotAllowedException e) {
+            log.warn("Error al eliminar objeto: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }

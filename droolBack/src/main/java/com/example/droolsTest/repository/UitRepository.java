@@ -16,16 +16,21 @@ import java.util.Optional;
 @Repository
 public interface UitRepository extends JpaRepository<Uit, Long> {
 
+    // Métodos derivados - más legibles y mantenibles
     Optional<Uit> findByAnioVigenciaAndEstadoAndEstadoRegistroTrue(Integer anio, String estado);
+
     List<Uit> findByEstadoAndEstadoRegistroTrueOrderByAnioVigenciaDesc(String estado);
+
     boolean existsByAnioVigenciaAndEstadoRegistroTrue(Integer anio);
+
     List<Uit> findByAnioVigenciaBetweenAndEstadoAndEstadoRegistroTrueOrderByAnioVigencia(
             Integer anioInicio, Integer anioFin, String estado);
 
+    // Solo @Query cuando sea realmente necesario - para lógica compleja
     @Query("SELECT u FROM Uit u WHERE u.anioVigencia <= :anio AND u.estado = 'ACTIVO' AND u.estadoRegistro = true ORDER BY u.anioVigencia DESC LIMIT 1")
     Optional<Uit> findUitVigentePorFecha(@Param("anio") Integer anio);
 
-    // Borrado lógico (requiere UPDATE)
+    // Borrado lógico - necesita @Query porque es UPDATE
     @Modifying
     @Transactional
     @Query("UPDATE Uit u SET u.estadoRegistro = false, u.updatedAt = CURRENT_TIMESTAMP, u.updatedBy = :usuario WHERE u.id = :id")

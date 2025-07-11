@@ -112,4 +112,46 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException e) {
+        log.warn("Recurso no encontrado: {}", e.getMessage());
+
+        ErrorResponse error = ErrorResponse.builder()
+                .code("RESOURCE_NOT_FOUND")
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(OperationNotAllowedException.class)
+    public ResponseEntity<ErrorResponse> handleOperationNotAllowed(OperationNotAllowedException e) {
+        log.warn("Operación no permitida: {}", e.getMessage());
+
+        ErrorResponse error = ErrorResponse.builder()
+                .code("OPERATION_NOT_ALLOWED")
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .build();
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(BusinessValidationException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessValidation(BusinessValidationException e) {
+        log.warn("Error de validación de negocio: {}", e.getMessage());
+
+        ErrorResponse error = ErrorResponse.builder()
+                .code("BUSINESS_VALIDATION_ERROR")
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .build();
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
 }

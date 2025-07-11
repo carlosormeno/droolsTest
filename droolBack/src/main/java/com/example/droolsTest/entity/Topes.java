@@ -1,6 +1,7 @@
 package com.example.droolsTest.entity;
 
 import com.example.droolsTest.annotation.ParametricaEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -9,7 +10,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "topes")
@@ -35,9 +35,6 @@ public class Topes {
 
     @Column(name = "id_objeto_contratacion", nullable = false, insertable = false, updatable = false)
     private Long idObjetoContratacion;
-
-    @Column(name = "id_sub_descripcion_contratacion", insertable = false, updatable = false)
-    private Long idSubDescripcionContratacion;
 
     @Column(name = "id_operador_monto", nullable = false, insertable = false, updatable = false)
     private Long idOperadorMonto;
@@ -77,26 +74,27 @@ public class Topes {
     @Builder.Default
     private Boolean estadoRegistro = Boolean.TRUE;
 
-    // Relaciones JPA
+    // Relaciones JPA - SIMPLIFICADAS SEGÚN SQL
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tipo_proceso_seleccion", referencedColumnName = "id")
     @ToString.Exclude
+    @JsonBackReference("tipo-proceso-topes")
     private TipoProcesoSeleccion tipoProcesoSeleccion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_objeto_contratacion", referencedColumnName = "id")
     @ToString.Exclude
+    @JsonBackReference("objeto-topes")
     private ObjetoContratacion objetoContratacion;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_sub_descripcion_contratacion", referencedColumnName = "id")
-    @ToString.Exclude
-    private SubDescripcionContratacion subDescripcionContratacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_operador_monto", referencedColumnName = "id")
     @ToString.Exclude
+    @JsonBackReference("operador-topes")
     private OperadoresMonto operadorMonto;
+
+    // ELIMINADA: Relación con SubDescripcionContratacion (según cambios SQL)
+    // ELIMINADA: Relación directa con UIT (se mantiene independiente)
 
     // Validaciones
     @PrePersist

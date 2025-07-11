@@ -1,14 +1,15 @@
 package com.example.droolsTest.entity;
 
 import com.example.droolsTest.annotation.ParametricaEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -47,6 +48,9 @@ public class ObjetoContratacion {
     @Builder.Default
     private String estado = "ACTIVO";
 
+    @Column(name = "id_sub_descripcion_contratacion", insertable = false, updatable = false)
+    private Long idSubDescripcionContratacion;
+
     // Auditoría
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -66,12 +70,19 @@ public class ObjetoContratacion {
     @Builder.Default
     private Boolean estadoRegistro = Boolean.TRUE;
 
-    // Relaciones
-    @OneToMany(mappedBy = "objetoContratacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // Relación con SubDescripcionContratacion (muchos a uno) - CORREGIDO SEGÚN SQL
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_sub_descripcion_contratacion", nullable = true)
     @ToString.Exclude
-    private List<SubDescripcionContratacion> subDescripciones;
+    @JsonBackReference("subdescripcion-objetos")
+    private SubDescripcionContratacion subDescripcionContratacion;
 
-    @OneToMany(mappedBy = "objetoContratacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // Relación con Topes
+    @OneToMany(mappedBy = "objetoContratacion",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
+            orphanRemoval = false,
+            fetch = FetchType.LAZY)
+    @Builder.Default
     @ToString.Exclude
-    private List<Topes> topes;
+    private List<Topes> topes = new ArrayList<>();
 }

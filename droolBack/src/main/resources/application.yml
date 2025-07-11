@@ -113,7 +113,7 @@ spring:
 
   # Configuración de base de datos para Docker (PostgreSQL)
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/drools_db}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres-drools:5432/drools_db}
     username: ${SPRING_DATASOURCE_USERNAME:drools_user}
     password: ${SPRING_DATASOURCE_PASSWORD:drools_password}
     driver-class-name: org.postgresql.Driver

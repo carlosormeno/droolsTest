@@ -1,6 +1,7 @@
 package com.example.droolsTest.controller;
 
 import com.example.droolsTest.entity.*;
+import com.example.droolsTest.exception.EntityNotFoundException;
 import com.example.droolsTest.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,15 +44,15 @@ public class UitController {
         }
     }
 
-    /**
-     * Obtener UIT por ID
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Uit> obtenerUitPorId(@PathVariable Long id) {
-        log.debug("GET /api/uit/{} - Obteniendo UIT", id);
-        Optional<Uit> uit = Optional.ofNullable(uitService.obtenerPorId(id));
-        return uit.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            log.debug("GET /api/uit/{}", id);
+            Uit uit = uitService.obtenerPorId(id);
+            return ResponseEntity.ok(uit);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**

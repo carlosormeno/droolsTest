@@ -30,4 +30,6 @@ public interface TipoProcesoRepository extends JpaRepository<TipoProcesoSeleccio
     @Query("SELECT DISTINCT tp FROM TipoProcesoSeleccion tp JOIN tp.topes t WHERE t.anioVigencia = :anio AND tp.estado = 'ACTIVO' AND tp.estadoRegistro = true AND t.estado = 'ACTIVO' AND t.estadoRegistro = true")
     List<TipoProcesoSeleccion> findTiposProcesoConTopesVigentes(@Param("anio") Integer anio);
 
+    List<TipoProcesoSeleccion> findByEstadoAndEstadoRegistroTrueOrderByNombre(String estado);
+
 }

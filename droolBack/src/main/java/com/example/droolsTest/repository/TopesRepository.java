@@ -1,94 +1,83 @@
 package com.example.droolsTest.repository;
 
-import com.example.droolsTest.entity.*;
+import com.example.droolsTest.entity.ObjetoContratacion;
+import com.example.droolsTest.entity.Topes;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface TopesRepository extends JpaRepository<Topes, Long> {
 
-    List<Topes> findByAnioVigenciaAndEstadoAndEstadoRegistroTrueOrderByMontoDesc(Integer anio, String estado);
-    List<Topes> findByIdTipoProcesoSeleccionAndAnioVigenciaAndEstadoAndEstadoRegistroTrueOrderByMonto(
-            Long tipoProcesoId, Integer anio, String estado);
-    List<Topes> findByIdObjetoContratacionAndAnioVigenciaAndEstadoAndEstadoRegistroTrueOrderByMonto(
-            Long objetoId, Integer anio, String estado);
-    List<Topes> findByMontoBetweenAndAnioVigenciaAndEstadoAndEstadoRegistroTrueOrderByMonto(
-            BigDecimal montoMin, BigDecimal montoMax, Integer anio, String estado);
+    Page<Topes> findByAnioVigenciaAndEstadoAndEstadoRegistroTrueOrderByMontoDesc(
+            Integer anio, String estado, Pageable pageable);
 
-    // Lógica temporal
-    @Query("SELECT t FROM Topes t WHERE t.anioVigencia <= :anio AND t.estado = 'ACTIVO' AND t.estadoRegistro = true ORDER BY t.anioVigencia DESC")
-    List<Topes> findTopesVigentesPorFecha(@Param("anio") Integer anio);
+    Page<Topes> findByTipoProcesoSeleccionIdAndAnioVigenciaAndEstadoAndEstadoRegistroTrueOrderByMonto(
+            Long tipoProcesoId, Integer anio, String estado, Pageable pageable);
 
-    // JOIN FETCH para performance
-    @Query("SELECT t FROM Topes t " +
-            "JOIN FETCH t.tipoProcesoSeleccion tps " +
-            "JOIN FETCH t.objetoContratacion oc " +
-            "LEFT JOIN FETCH t.subDescripcionContratacion sdc " +
-            "JOIN FETCH t.operadorMonto om " +
-            "WHERE t.anioVigencia = :anio AND t.estado = 'ACTIVO' AND t.estadoRegistro = true " +
-            "ORDER BY tps.nombre, oc.nombre, sdc.nombre")
-    List<Topes> findTopesConRelacionesPorAnio(@Param("anio") Integer anio);
+    Page<Topes> findByObjetoContratacionIdAndAnioVigenciaAndEstadoAndEstadoRegistroTrueOrderByMonto(
+            Long objetoId, Integer anio, String estado, Pageable pageable);
 
-    // Búsqueda específica con lógica compleja
-    @Query("SELECT t FROM Topes t " +
-            "WHERE t.idTipoProcesoSeleccion = :tipoProcesoId " +
-            "AND t.idObjetoContratacion = :objetoId " +
-            "AND (:subDescripcionId IS NULL AND t.idSubDescripcionContratacion IS NULL OR t.idSubDescripcionContratacion = :subDescripcionId) " +
-            "AND t.idOperadorMonto = :operadorId " +
+    Page<Topes> findByMontoBetweenAndAnioVigenciaAndEstadoAndEstadoRegistroTrueOrderByMonto(
+            BigDecimal montoMin, BigDecimal montoMax, Integer anio, String estado, Pageable pageable);
+
+    Optional<Topes> findByIdAndEstadoRegistroTrue(Long id);
+
+    List<Topes> findByAnioVigenciaAndEstadoAndEstadoRegistroTrue(Integer anio, String estado);
+
+    boolean existsByObjetoContratacionAndEstadoRegistroTrue(ObjetoContratacion objetoContratacion);
+
+    // Solo @Query para lógicas complejas que no se pueden expresar con métodos derivados
+
+    // Validar combinación única - necesita lógica compleja
+    @Query("SELECT COUNT(t) > 0 FROM Topes t " +
+            "WHERE t.tipoProcesoSeleccion.id = :tipoProcesoId " +
+            "AND t.objetoContratacion.id = :objetoId " +
+            "AND t.operadorMonto.id = :operadorId " +
             "AND t.anioVigencia = :anio " +
-            "AND t.estado = 'ACTIVO' AND t.estadoRegistro = true")
-    Optional<Topes> findTopeEspecifico(
+            "AND t.estadoRegistro = true " +
+            "AND (:id IS NULL OR t.id != :id)")
+    boolean existeCombinacionUnica(
             @Param("tipoProcesoId") Long tipoProcesoId,
             @Param("objetoId") Long objetoId,
-            @Param("subDescripcionId") Long subDescripcionId,
             @Param("operadorId") Long operadorId,
-            @Param("anio") Integer anio
-    );
+            @Param("anio") Integer anio,
+            @Param("id") Long id);
 
-    // Evaluación de reglas (lógica matemática compleja)
+    // Evaluación de montos - lógica compleja con operadores
     @Query("SELECT t FROM Topes t " +
             "JOIN FETCH t.tipoProcesoSeleccion tps " +
             "JOIN FETCH t.objetoContratacion oc " +
-            "LEFT JOIN FETCH t.subDescripcionContratacion sdc " +
             "JOIN FETCH t.operadorMonto om " +
-            "WHERE t.anioVigencia = :anio AND t.estado = 'ACTIVO' AND t.estadoRegistro = true " +
-            "AND tps.estado = 'ACTIVO' AND tps.estadoRegistro = true " +
+            "WHERE t.anioVigencia = :anio " +
+            "AND t.estado = 'ACTIVO' " +
+            "AND t.estadoRegistro = true " +
+            "AND tps.estado = 'ACTIVO' " +
+            "AND tps.estadoRegistro = true " +
             "AND (" +
             "  (om.codigo = 'MAYOR_IGUAL' AND :monto >= t.monto) OR " +
             "  (om.codigo = 'MENOR_IGUAL' AND :monto <= t.monto) OR " +
             "  (om.codigo = 'MAYOR' AND :monto > t.monto) OR " +
-            "  (om.codigo = 'MENOR' AND :monto < t.monto)" +
+            "  (om.codigo = 'MENOR' AND :monto < t.monto) OR " +
+            "  (om.codigo = 'IGUAL' AND t.monto = :monto) " +
             ") " +
-            "ORDER BY tps.nombre, oc.nombre")
+            "ORDER BY tps.nombre, oc.nombre, t.monto")
     List<Topes> findTopesAplicablesParaMonto(@Param("monto") BigDecimal monto, @Param("anio") Integer anio);
 
-    // Validación de duplicados (lógica condicional compleja)
-    @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END FROM Topes t " +
-            "WHERE t.idTipoProcesoSeleccion = :tipoProcesoId " +
-            "AND t.idObjetoContratacion = :objetoId " +
-            "AND (:subDescripcionId IS NULL AND t.idSubDescripcionContratacion IS NULL OR t.idSubDescripcionContratacion = :subDescripcionId) " +
-            "AND t.anioVigencia = :anio " +
-            "AND t.estadoRegistro = true " +
-            "AND (:id IS NULL OR t.id != :id)")
-    boolean existsCombinacionExcludingId(
-            @Param("tipoProcesoId") Long tipoProcesoId,
-            @Param("objetoId") Long objetoId,
-            @Param("subDescripcionId") Long subDescripcionId,
-            @Param("anio") Integer anio,
-            @Param("id") Long id
-    );
+    // Estadísticas - agregaciones que requieren @Query
+    @Query("SELECT t.anioVigencia, COUNT(t), MIN(t.monto), MAX(t.monto), AVG(t.monto) " +
+            "FROM Topes t " +
+            "WHERE t.estadoRegistro = true " +
+            "GROUP BY t.anioVigencia " +
+            "ORDER BY t.anioVigencia")
+    List<Object[]> obtenerEstadisticasPorAnio();
 
-    // Estadísticas (GROUP BY)
-    @Query("SELECT t.anioVigencia, COUNT(t) FROM Topes t WHERE t.estadoRegistro = true GROUP BY t.anioVigencia ORDER BY t.anioVigencia")
-    List<Object[]> countTopesPorAnio();
-
+    List<Topes> findByEstadoAndEstadoRegistroTrue(String estado);
 }

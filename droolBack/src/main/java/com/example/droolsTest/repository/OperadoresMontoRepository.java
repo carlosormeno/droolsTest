@@ -17,11 +17,14 @@ import java.util.Optional;
 public interface OperadoresMontoRepository extends JpaRepository<OperadoresMonto, Long> {
 
     List<OperadoresMonto> findByEstadoAndEstadoRegistroTrueOrderByNombre(String estado);
+
     Optional<OperadoresMonto> findByCodigoAndEstadoRegistroTrue(String codigo);
+
     Optional<OperadoresMonto> findBySimboloAndEstadoRegistroTrue(String simbolo);
+
     boolean existsByCodigoAndEstadoRegistroTrueAndIdNot(String codigo, Long id);
+
     boolean existsBySimboloAndEstadoRegistroTrueAndIdNot(String simbolo, Long id);
 
-    @Query("SELECT DISTINCT om FROM OperadoresMonto om JOIN om.topes t WHERE om.estado = 'ACTIVO' AND om.estadoRegistro = true AND t.estadoRegistro = true")
-    List<OperadoresMonto> findOperadoresEnUso();
+    List<OperadoresMonto> findByEstadoRegistroTrueOrderByNombre();
 }
