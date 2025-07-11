@@ -6,9 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { RuleForm } from '../rule-form/rule-form'; // ✅ Tu nombre preferido
 import { RulesList } from '../rules-list/rules-list'; // ✅ Tu nombre preferido
-import { Drools } from '../../services/drools';
-import { Notification } from '../../services/notification';
-import { Rule } from '../../models/rule';
+import { Drools } from '../../../services/drools';
+import { Notification } from '../../../services/notification';
+import { Rule } from '../../../models/rule';
 
 @Component({
   selector: 'app-rules-manager',

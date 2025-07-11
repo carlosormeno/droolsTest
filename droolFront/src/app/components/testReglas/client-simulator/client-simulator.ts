@@ -11,10 +11,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SimulationResults } from '../simulation-results/simulation-results';
-import { Drools } from '../../services/drools';
-import { Notification } from '../../services/notification';
-import { Customer } from '../../models/customer';
-import { ExecutionResult, Scenario } from '../../models/rule';
+import { Drools } from '../../../services/drools';
+import { Notification } from '../../../services/notification';
+import { Customer } from '../../../models/customer';
+import { ExecutionResult, Scenario } from '../../../models/rule';
 
 @Component({
   selector: 'app-client-simulator',

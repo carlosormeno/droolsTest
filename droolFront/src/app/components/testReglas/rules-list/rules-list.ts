@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Rule } from '../../models/rule';
+import { Rule } from '../../../models/rule';
 
 @Component({
   selector: 'app-rules-list',

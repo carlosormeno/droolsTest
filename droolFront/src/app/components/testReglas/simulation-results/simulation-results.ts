@@ -8,7 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
-import { ExecutionResult } from '../../models/rule';
+import { ExecutionResult } from '../../../models/rule';
 
 @Component({
   selector: 'app-simulation-results',

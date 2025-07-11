@@ -10,9 +10,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
-import { Drools } from '../../services/drools';
-import { Notification } from '../../services/notification';
-import { Rule } from '../../models/rule';
+import { Drools } from '../../../services/drools';
+import { Notification } from '../../../services/notification';
+import { Rule } from '../../../models/rule';
 import { RuleBuilder } from '../rule-builder/rule-builder'; // ✅ Corregido
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
