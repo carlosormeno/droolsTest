@@ -1,0 +1,199 @@
+<!-- DEBUG TEMPORAL - eliminar después
+<div style="background: yellow; padding: 10px;">
+  DEBUG: result = {{ result | json }}
+</div>
+ -->
+
+<div class="results-container">
+  <!-- Estado inicial -->
+  <mat-card class="results-card" *ngIf="!result">
+    <mat-card-content class="empty-results">
+      <mat-icon class="empty-icon">analytics</mat-icon>
+      <h3>Ejecuta una simulación</h3>
+      <p>Los resultados aparecerán aquí después de ejecutar las reglas</p>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Resultados -->
+  <mat-card class="results-card" *ngIf="result">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>analytics</mat-icon>
+        Resultados de la Simulación
+      </mat-card-title>
+      <mat-card-subtitle>
+        Procesado en {{ result.executionTime }}ms
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Información del cliente -->
+      <div class="customer-summary">
+        <h3>
+          <mat-icon>person</mat-icon>
+          <!-- {{ result.customer.name }}
+          {{ result && result.customer ? result.customer.name : 'Sin nombre' }} -->
+           {{ result ? result.name : 'Sin nombre' }}
+        </h3>
+        <p class="customer-email">{{ result ? result.email : 'Sin email' }}</p>
+      </div>
+
+      <!-- Métricas principales -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <mat-icon>cake</mat-icon>
+          <div class="metric-info">
+            <span class="metric-value">{{ result ? result.age : 'Sin edad' }}</span>
+            <span class="metric-label">Años</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <mat-icon>attach_money</mat-icon>
+          <div class="metric-info">
+            <!-- <span class="metric-value">${{ result.customer.totalPurchases | number }}</span> -->
+            <span class="metric-value">${{ result ? (result.totalPurchases | number) : 0 }}</span>
+            <span class="metric-label">Compras</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <mat-icon>loyalty</mat-icon>
+          <div class="metric-info">
+            <!-- <span class="metric-value">{{ result.customer.loyaltyPoints | number }}</span> -->
+            <span class="metric-value">{{ result ? (result.loyaltyPoints | number) : 0 }}</span>
+            <span class="metric-label">Puntos</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <mat-icon>schedule</mat-icon>
+          <div class="metric-info">
+            <!-- <span class="metric-value">{{ result && result.customer ? result.customer.daysSinceRegistration : 'Sin Dias de Registro' }}</span> -->
+            <span class="metric-value">{{ result ? result.daysSinceRegistration : 0 }}</span>
+            <span class="metric-label">Días</span>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Clasificaciones -->
+      <div class="classifications-section">
+        <h4>
+          <mat-icon>category</mat-icon>
+          Clasificaciones ({{ getClassificationText() }})
+        </h4>
+
+        <div class="classification-chips" *ngIf="getClassificationCount() > 0">
+          <!-- <mat-chip
+            *ngIf="result.customer.vipCustomer"
+            class="classification-chip vip-chip"> -->
+          <mat-chip *ngIf="result && result.vipCustomer" class="classification-chip vip-chip">
+            <mat-icon>star</mat-icon>
+            Cliente VIP
+          </mat-chip>
+
+          <!-- <mat-chip
+            *ngIf="result.customer.loyalCustomer"
+            class="classification-chip loyal-chip"> -->
+          <mat-chip *ngIf="result && result.loyalCustomer" class="classification-chip loyal-chip">
+            <mat-icon>favorite</mat-icon>
+            Cliente Leal
+          </mat-chip>
+
+          <!-- <mat-chip
+            *ngIf="result.customer.youngCustomer"
+            class="classification-chip young-chip"> -->
+          <mat-chip *ngIf="result && result.youngCustomer" class="classification-chip young-chip">
+            <mat-icon>emoji_people</mat-icon>
+            Cliente Joven
+          </mat-chip>
+
+          <!-- <mat-chip
+            *ngIf="result.customer.newCustomer"
+            class="classification-chip new-chip"> -->
+          <mat-chip *ngIf="result && result.newCustomer" class="classification-chip new-chip">
+            <mat-icon>new_releases</mat-icon>
+            Cliente Nuevo
+          </mat-chip>
+        </div>
+
+        <div class="no-classifications" *ngIf="getClassificationCount() === 0">
+          <mat-icon>info</mat-icon>
+          <p>Este cliente no cumple con ninguna regla de clasificación</p>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Beneficios y recomendaciones -->
+      <div class="benefits-section" *ngIf="result?.discount || result?.recommendation">
+        <h4>
+          <mat-icon>local_offer</mat-icon>
+          Beneficios y Recomendaciones
+        </h4>
+
+        <div class="benefit-item" *ngIf="result?.discount">
+          <mat-icon>discount</mat-icon>
+          <div>
+            <strong>Descuento:</strong>
+            <span>{{ result.discount }}</span>
+          </div>
+        </div>
+
+        <div class="benefit-item" *ngIf="result?.recommendation">
+          <mat-icon>lightbulb</mat-icon>
+          <div>
+            <strong>Recomendación:</strong>
+            <span>{{ result.recommendation }}</span>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Reglas ejecutadas -->
+      <div class="executed-rules-section">
+        <h4>
+          <mat-icon>rule</mat-icon>
+          Reglas Ejecutadas ({{ result.executedRules?.length || 0 }})
+        </h4>
+
+        <div class="executed-rules" *ngIf="result?.executedRules?.length">
+          <mat-chip
+            *ngFor="let rule of result?.executedRules || []"
+            class="rule-chip">
+            <mat-icon>check_circle</mat-icon>
+            {{ rule }}
+          </mat-chip>
+        </div>
+
+        <div class="no-rules" *ngIf="result?.executedRules?.length === 0">
+          <mat-icon>warning</mat-icon>
+          <p>No se ejecutaron reglas para este cliente</p>
+        </div>
+      </div>
+
+      <!-- Guardar escenario -->
+      <div class="save-scenario-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre del Escenario</mat-label>
+          <input matInput
+                 [value]="scenarioName"
+                 (input)="onScenarioNameChange($any($event.target).value)"
+                 placeholder="Ej: Cliente VIP de 25 años">
+          <mat-icon matSuffix>bookmark</mat-icon>
+        </mat-form-field>
+
+        <button mat-raised-button
+                color="accent"
+                (click)="onSaveScenario()"
+                class="save-button">
+          <mat-icon>save</mat-icon>
+          Guardar Escenario
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

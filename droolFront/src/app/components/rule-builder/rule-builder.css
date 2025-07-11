@@ -1,0 +1,325 @@
+/* rule-builder.component.scss */
+
+.header-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.title-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.basic-info {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Templates Section */
+.templates-container {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.templates-help {
+  font-size: 0.875rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+
+  mat-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.templates-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.template-button {
+  padding: 1rem;
+  text-align: left;
+  height: auto;
+  justify-content: flex-start;
+
+  .template-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .template-name {
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+
+  .template-description {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+}
+
+/* Constructor Section */
+.constructor-container {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.conditions-container,
+.actions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.condition-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background-color: #eff6ff;
+  border-radius: 0.5rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+}
+
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background-color: #f0fdf4;
+  border-radius: 0.5rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+}
+
+/* Form field sizing */
+.connector-field {
+  width: 5rem;
+  min-width: 5rem;
+}
+
+.field-select {
+  width: 10rem;
+  min-width: 10rem;
+}
+
+.operator-select {
+  width: 10rem;
+  min-width: 10rem;
+}
+
+.value-input {
+  flex: 1;
+  min-width: 8rem;
+}
+
+.action-type-select {
+  width: 12rem;
+  min-width: 12rem;
+}
+
+.action-value-input {
+  flex: 1;
+  min-width: 8rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .connector-field,
+  .field-select,
+  .operator-select,
+  .value-input,
+  .action-type-select,
+  .action-value-input {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+.add-button {
+  width: 100%;
+  border: 2px dashed #d1d5db;
+  color: #6b7280;
+  margin-top: 0.5rem;
+
+  &:hover {
+    border-color: #9ca3af;
+    background-color: #f9fafb;
+  }
+}
+
+/* Code View Section */
+.code-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.code-field {
+  width: 100%;
+}
+
+.code-textarea {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.validation-errors,
+.validation-success {
+  margin-top: 0.5rem;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+
+  @media (max-width: 480px) {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+/* Utility classes for spacing */
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+/* Icon styling */
+mat-icon {
+  vertical-align: middle;
+}
+
+/* Expansion panel customization */
+mat-expansion-panel {
+  margin-bottom: 1rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* Tabs customization */
+mat-tab-group {
+  .mat-mdc-tab-body-content {
+    padding: 0;
+    overflow: visible;
+  }
+}
+
+/* Chip styling */
+mat-chip-listbox {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Form field appearance improvements */
+mat-form-field {
+  &.mat-form-field-appearance-outline {
+    .mat-mdc-text-field-wrapper {
+      background-color: white;
+    }
+  }
+}
+
+/* Loading state (if needed)*/
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Success/Error states*/
+.success {
+  color: #059669;
+}
+
+.error {
+  color: #dc2626;
+}
+
+/* Animation for smooth transitions*/
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

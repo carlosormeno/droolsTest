@@ -1,0 +1,117 @@
+<!-- rule-form.component.html -->
+<div class="rule-form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title class="form-header">
+        <mat-icon>{{ isEditing ? 'edit' : 'add_circle_outline' }}</mat-icon>
+        {{ isEditing ? 'Editar' : 'Crear Nueva' }} Regla
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Mensajes de éxito/error -->
+      <div *ngIf="successMessage" class="success-message">
+        <mat-icon>check_circle</mat-icon>
+        {{ successMessage }}
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        <mat-icon>error</mat-icon>
+        {{ errorMessage }}
+      </div>
+
+      <!-- OPCIÓN 1: Solo usar el Constructor Visual (RECOMENDADO) -->
+      <app-rule-builder
+        [initialRule]="editingRule"
+        (ruleGenerated)="onRuleGenerated($event)">
+      </app-rule-builder>
+
+      <!-- OPCIÓN 2: Formulario tradicional (COMENTADO - descomenta si prefieres el formulario original) -->
+      <!--
+      <form (ngSubmit)="onSubmit()" class="rule-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre de la Regla</mat-label>
+          <input matInput
+                 [(ngModel)]="currentRule.name"
+                 name="name"
+                 placeholder="Ej: Cliente VIP Premium"
+                 required>
+          <mat-icon matSuffix>badge</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput
+                    [(ngModel)]="currentRule.description"
+                    name="description"
+                    rows="3"
+                    placeholder="Describe qué hace esta regla...">
+          </textarea>
+          <mat-icon matSuffix>description</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Plantilla Base</mat-label>
+          <mat-select [(ngModel)]="currentRule.template"
+                      name="template"
+                      (selectionChange)="onTemplateChange()">
+            <mat-option *ngFor="let template of templateOptions" [value]="template.value">
+              {{ template.label }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matSuffix>template_9</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contenido DRL</mat-label>
+          <textarea matInput
+                    [(ngModel)]="currentRule.content"
+                    name="content"
+                    rows="10"
+                    placeholder="rule 'Mi Regla'&#10;when&#10;    $customer : Customer(condition)&#10;then&#10;    // acciones&#10;end"
+                    required>
+          </textarea>
+          <mat-icon matSuffix>code</mat-icon>
+        </mat-form-field>
+
+        <div class="checkbox-section">
+          <mat-checkbox [(ngModel)]="currentRule.active" name="active">
+            Regla Activa
+          </mat-checkbox>
+        </div>
+
+        <div class="button-section">
+          <button mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="loading">
+            <span *ngIf="loading">
+              <mat-spinner diameter="20"></mat-spinner>
+            </span>
+            <mat-icon *ngIf="!loading">{{ isEditing ? 'update' : 'save' }}</mat-icon>
+            {{ loading ? 'Guardando...' : (isEditing ? 'Actualizar' : 'Crear') }} Regla
+          </button>
+
+          <button mat-button
+                  type="button"
+                  (click)="onCancel()"
+                  [disabled]="loading">
+            <mat-icon>cancel</mat-icon>
+            Cancelar
+          </button>
+
+          <button mat-button
+                  color="accent"
+                  type="button"
+                  (click)="testRule()"
+                  [disabled]="!currentRule.content || loading">
+            <mat-icon>science</mat-icon>
+            Probar Regla
+          </button>
+        </div>
+      </form>
+      -->
+
+    </mat-card-content>
+  </mat-card>
+</div>

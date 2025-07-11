@@ -1,0 +1,21 @@
+<p>header works!</p>
+<mat-toolbar color="primary" class="header-toolbar">
+  <div class="header-container">
+    <div class="logo-section">
+      <mat-icon>settings</mat-icon>
+      <span class="logo-text">Drools Rules Manager</span>
+    </div>
+
+    <nav class="navigation">
+      <button mat-button routerLink="/rules" routerLinkActive="active-link">
+        <mat-icon>rule</mat-icon>
+        Gestor de Reglas
+      </button>
+
+      <button mat-button routerLink="/simulator" routerLinkActive="active-link">
+        <mat-icon>person_search</mat-icon>
+        Simulador de Clientes
+      </button>
+    </nav>
+  </div>
+</mat-toolbar>
